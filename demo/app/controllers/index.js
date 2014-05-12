@@ -4,23 +4,18 @@ var controls=require('controls');
 var menuView=controls.getMenuView();
 var mainView=controls.getMainView();
 
-
-// add menu view to container exposed by widget
-$.drawermenu.drawermenuview.add(menuView.getView()); // get view is an Alloy Method
-
-// Change the animation duration to a faster motion. Default is 400.
-$.drawermenu.setDuration(200);
-
 // attach event listener to menu button
 mainView.menuButton.add(controls.getMenuButton({
 	h: '60',
 	w: '60'
 }));
 
-mainView.menuButton.addEventListener('click',$.drawermenu.showhidemenu); // method is exposed by widget
+//Minor changes to click event. Update the menuOpen status;
+mainView.menuButton.addEventListener('click',function(){
+	$.drawermenu.showhidemenu();
+	$.drawermenu.menuOpen=!$.drawermenu.menuOpen;
+}); // method is exposed by widget
 
-// add view to container exposed by widget
-$.drawermenu.drawermainview.add(mainView.getView());
 
 // get config view as objects
 var configView=controls.getConfigView();
@@ -31,7 +26,18 @@ configView.menuButton.add(controls.getMenuButton({
                 w: '60'
             }));
 
-configView.menuButton.addEventListener('click',$.drawermenu.showhidemenu); // method is exposed by widget
+//Minor changes to click event. Update the menuOpen status;
+configView.menuButton.addEventListener('click',function(){
+	$.drawermenu.showhidemenu();
+	$.drawermenu.menuOpen=!$.drawermenu.menuOpen;
+}); // method is exposed by widget
+
+$.drawermenu.init({
+    menuview:menuView.getView(),
+    mainview:mainView.getView(),
+    duration:200,
+    parent: $.index
+})
 
 //variable to controler de open/close slide
 var activeView = 1;
@@ -39,6 +45,7 @@ var activeView = 1;
 // add event listener in this context
 menuView.menuTable.addEventListener('click',function(e){
     $.drawermenu.showhidemenu();
+    $.drawermenu.menuOpen = false; //update menuOpen status to prevent inconsistency.
     if(e.rowData.id==="row1"){
         if(activeView!=1){
             $.drawermenu.drawermainview.remove(configView.getView());
